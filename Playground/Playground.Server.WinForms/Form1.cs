@@ -27,7 +27,7 @@ namespace Playground.WinForms
             field = new Field(Width - 50, Height - 50);
 
             updateTimer = new Timer();
-            updateTimer.Interval = 1000 / 20; // 20 times per sec
+            updateTimer.Interval = 1000 / 60; // 20 times per sec
             updateTimer.Tick += Update_Tick;
 
             updateTimer.Start();
@@ -80,7 +80,7 @@ namespace Playground.WinForms
 
         private Circle CreateCircle(int x, int y, float vx, float vy)
         {
-            int v = random.Next(5, 20);
+            int v = random.Next(5, 10);
             var color = GetColor(v);
             var circle = new Circle { Info = new CircleInfo { Position = new Vector2(x, y), Color = color }, Velocity = new Vector2(vx * v, vy * v) };
             return circle;
