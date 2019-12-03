@@ -1,21 +1,27 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.168
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29324.140
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground.WinForms", "Playground.WinForms\Playground.WinForms.csproj", "{C24B83C7-D42B-4FD4-A14A-F4299E6D74BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Playground.WinForms", "Playground.WinForms\Playground.WinForms.csproj", "{C24B83C7-D42B-4FD4-A14A-F4299E6D74BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground.LiteNetLib", "Playground.LiteNetLib\Playground.LiteNetLib.csproj", "{07A678CF-5B12-4F98-A4B0-BD64B10D993D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Playground.LiteNetLib", "Playground.LiteNetLib\Playground.LiteNetLib.csproj", "{07A678CF-5B12-4F98-A4B0-BD64B10D993D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground.Client.Console", "Playground.Client.Console\Playground.Client.Console.csproj", "{8E860785-F66A-49A0-AF6D-F3E5FF738560}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Playground.Client.Console", "Playground.Client.Console\Playground.Client.Console.csproj", "{8E860785-F66A-49A0-AF6D-F3E5FF738560}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground.Server.Console", "Playground.Server.Console\Playground.Server.Console.csproj", "{CB779334-DE85-40D2-ACF2-DE15FAFD00D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Playground.Server.Console", "Playground.Server.Console\Playground.Server.Console.csproj", "{CB779334-DE85-40D2-ACF2-DE15FAFD00D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground.Hazel", "Playground.Hazel\Playground.Hazel.csproj", "{0554900A-E3F7-4270-BC3F-6AE7376D9AD8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Playground.Hazel", "Playground.Hazel\Playground.Hazel.csproj", "{0554900A-E3F7-4270-BC3F-6AE7376D9AD8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground.Client.WinForms", "Playground.Client.WinForms\Playground.Client.WinForms.csproj", "{4BE2EECF-FA9B-4909-984F-3090D267DE55}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground.Server.WinForms", "Playground.Server.WinForms\Playground.Server.WinForms.csproj", "{6964A5E9-7EAA-46E2-9712-C12FE2CBECBB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground.Benchmark", "Playground.Benchmark\Playground.Benchmark.csproj", "{A6BE7AA9-8876-4F2C-8B02-13C6B6E2E056}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground.BenchmarkNetFramework", "Playground.BenchmarkNetFramework\Playground.BenchmarkNetFramework.csproj", "{790DBABF-0296-47C8-BC08-9775AE1BAADC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground.Photon.BenchmarkNet", "Playground.Photon.BenchmarkNet\Playground.Photon.BenchmarkNet.csproj", "{5355F55E-8E96-499B-87C0-BD5A4885CCCF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +57,18 @@ Global
 		{6964A5E9-7EAA-46E2-9712-C12FE2CBECBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6964A5E9-7EAA-46E2-9712-C12FE2CBECBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6964A5E9-7EAA-46E2-9712-C12FE2CBECBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6BE7AA9-8876-4F2C-8B02-13C6B6E2E056}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6BE7AA9-8876-4F2C-8B02-13C6B6E2E056}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6BE7AA9-8876-4F2C-8B02-13C6B6E2E056}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6BE7AA9-8876-4F2C-8B02-13C6B6E2E056}.Release|Any CPU.Build.0 = Release|Any CPU
+		{790DBABF-0296-47C8-BC08-9775AE1BAADC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{790DBABF-0296-47C8-BC08-9775AE1BAADC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{790DBABF-0296-47C8-BC08-9775AE1BAADC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{790DBABF-0296-47C8-BC08-9775AE1BAADC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5355F55E-8E96-499B-87C0-BD5A4885CCCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5355F55E-8E96-499B-87C0-BD5A4885CCCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5355F55E-8E96-499B-87C0-BD5A4885CCCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5355F55E-8E96-499B-87C0-BD5A4885CCCF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

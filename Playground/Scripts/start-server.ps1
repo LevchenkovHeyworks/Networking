@@ -1,0 +1,1 @@
+..\Playground.Server.WinForms\bin\Debug\Playground.Server.WinForms.exe

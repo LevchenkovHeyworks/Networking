@@ -1,0 +1,1 @@
+for($i=1; $i -le 10; $i++){ ..\Playground.Client.WinForms\bin\Debug\Playground.Client.WinForms.exe }
