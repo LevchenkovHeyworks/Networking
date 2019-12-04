@@ -1206,48 +1206,48 @@ namespace NX
     //    }
     //}
 
-    public sealed class SocketBenchmark : BenchmarkNet
-    {
-        public static void Server()
-        {
-            ManualResetEvent allDone = new ManualResetEvent(false);
+    //public sealed class SocketBenchmark : BenchmarkNet
+    //{
+    //    public static void Server()
+    //    {
+    //        ManualResetEvent allDone = new ManualResetEvent(false);
 
-            IPAddress ipAddress = IPAddress.Parse(ip);
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, port);
-            Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
+    //        IPAddress ipAddress = IPAddress.Parse(ip);
+    //        IPEndPoint localEndPoint = new IPEndPoint(ipAddress, port);
+    //        Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
 
-            try
-            {
-                listener.Bind(localEndPoint);
-                listener.Listen(100);
+    //        try
+    //        {
+    //            listener.Bind(localEndPoint);
+    //            listener.Listen(100);
 
-                while (true)
-                {
-                    // Set the event to nonsignaled state.  
-                    allDone.Reset();
+    //            while (true)
+    //            {
+    //                // Set the event to nonsignaled state.  
+    //                allDone.Reset();
 
-                    // Start an asynchronous socket to listen for connections.  
-                    Console.WriteLine("Waiting for a connection...");
-                    listener.BeginAccept(
-                        new AsyncCallback(AcceptCallback),
-                        listener);
+    //                // Start an asynchronous socket to listen for connections.  
+    //                Console.WriteLine("Waiting for a connection...");
+    //                listener.BeginAccept(
+    //                    new AsyncCallback(AcceptCallback),
+    //                    listener);
 
-                    // Wait until a connection is made before continuing.  
-                    allDone.WaitOne();
-                }
+    //                // Wait until a connection is made before continuing.  
+    //                allDone.WaitOne();
+    //            }
 
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-        }
+    //        }
+    //        catch (Exception e)
+    //        {
+    //            Console.WriteLine(e.ToString());
+    //        }
+    //    }
 
-        public static void Client()
-        {
+    //    public static void Client()
+    //    {
 
-        }
-    }
+    //    }
+    //}
 
     public sealed class LiteNetLibBenchmark : BenchmarkNet
     {
