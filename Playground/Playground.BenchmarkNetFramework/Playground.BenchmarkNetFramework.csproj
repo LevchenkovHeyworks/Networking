@@ -57,11 +57,13 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ENet-CSharp">
-      <HintPath>C:\Users\e.levchenkov\.nuget\packages\enet-csharp\2.3.1\lib\netstandard2.0\ENet-CSharp.dll</HintPath>
+    <Reference Include="ENet-CSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\libs\ENet-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="Hazel">
-      <HintPath>..\..\..\Hazel-Networking\Hazel\bin\Debug\Hazel.dll</HintPath>
+    <Reference Include="Hazel, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\libs\Hazel.dll</HintPath>
     </Reference>
     <Reference Include="LiteNetLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\LiteNetLib.0.8.3.1\lib\net35\LiteNetLib.dll</HintPath>

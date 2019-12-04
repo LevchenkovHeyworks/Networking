@@ -68,7 +68,7 @@ namespace NX
         public const string title = "BenchmarkNet";
         public const string version = "1.10";
         // Parameters
-        public const string ip = "127.0.0.1";
+        public const string ip = "192.168.88.199";
         public static byte selectedLibrary = 0;
         public static ushort port = 0;
         public static ushort maxClients = 0;
