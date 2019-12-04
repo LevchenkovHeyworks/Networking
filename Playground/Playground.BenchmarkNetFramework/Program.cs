@@ -28,14 +28,15 @@ using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.IO.Pipes;
 using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-//// ENet 2.0.8 (https://github.com/nxrighthere/ENet-CSharp)
-//using ENet;
+// ENet 2.0.8 (https://github.com/nxrighthere/ENet-CSharp)
+using ENet;
 //// UNet 1.0.0.9 (https://forum.unity.com/threads/standalone-library-binaries-aka-server-dll.526718)
 //using UnetServerDll;
 // LiteNetLib 0.8 (https://github.com/RevenantX/LiteNetLib)
@@ -45,7 +46,7 @@ using LiteNetLib.Utils;
 //using Lidgren.Network;
 //// MiniUDP 0.8.5 (https://github.com/ashoulson/MiniUDP)
 //using MiniUDP;
-// Hazel 0.1.2 (https://github.com/DarkRiftNetworking/Hazel-Networking)
+// Hazel 0.1.2 (https://github.com/willardf/Hazel-Networking)
 using Hazel;
 using Hazel.Udp;
 // Photon 4.0.29 (https://www.photonengine.com/en/OnPremise)
@@ -145,7 +146,7 @@ namespace NX
         private const int defaultServerTickRate = 64;
         private const int defaultClientTickRate = 64;
         private const int defaultSendRate = 15;
-        private const int defaultReliableMessages = 0;
+        private const int defaultReliableMessages = 500;
         private const int defaultUnreliableMessages = 1000;
         private const string defaultMessage = "Sometimes we just need a good networking library";
         // Functions
@@ -207,7 +208,7 @@ namespace NX
             {
                 if (selectedLibrary == 0)
                 {
-                    //serverThread = new Thread(ENetBenchmark.Server);
+                    serverThread = new Thread(ENetBenchmark.Server);
                 }
                 else if (selectedLibrary == 1)
                 {
@@ -302,8 +303,8 @@ namespace NX
 
             if (serverInstance || clientsInstance)
             {
-                //if (selectedLibrary == Array.FindIndex(networkingLibraries, entry => entry.Contains("ENet")))
-                //    ENet.Library.Initialize();
+                if (selectedLibrary == Array.FindIndex(networkingLibraries, entry => entry.Contains("ENet")))
+                    ENet.Library.Initialize();
             }
 
             if (serverInstance)
@@ -312,10 +313,10 @@ namespace NX
                     GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
 
                 maxPeers = ushort.MaxValue - 1;
-                //maxClientsPass = (selectedLibrary > 0 ? maxClients <= maxPeers : maxClients <= ENet.Library.maxPeers);
+                maxClientsPass = (selectedLibrary > 0 ? maxClients <= maxPeers : maxClients <= ENet.Library.maxPeers);
 
-                //if (!maxClientsPass)
-                //    maxClients = Math.Min(Math.Max((ushort)1, (ushort)maxClients), (selectedLibrary > 0 ? maxPeers : (ushort)ENet.Library.maxPeers));
+                if (!maxClientsPass)
+                    maxClients = Math.Min(Math.Max((ushort)1, (ushort)maxClients), (selectedLibrary > 0 ? maxPeers : (ushort)ENet.Library.maxPeers));
 
                 serverThread.Priority = ThreadPriority.AboveNormal;
                 serverThread.Start();
@@ -768,8 +769,8 @@ namespace NX
 
                 if (serverInstance || clientsInstance)
                 {
-                    //if (selectedLibrary == Array.FindIndex(networkingLibraries, entry => entry.Contains("ENet")))
-                    //    ENet.Library.Deinitialize();
+                    if (selectedLibrary == Array.FindIndex(networkingLibraries, entry => entry.Contains("ENet")))
+                        ENet.Library.Deinitialize();
                 }
             }, TaskCreationOptions.LongRunning);
         }
@@ -787,7 +788,7 @@ namespace NX
 
                     if (selectedLibrary == 0)
                     {
-                        //clients[i] = ENetBenchmark.Client();
+                        clients[i] = ENetBenchmark.Client();
                     }
                     else if (selectedLibrary == 1)
                     {
@@ -829,181 +830,183 @@ namespace NX
         }
     }
 
-    //public sealed class ENetBenchmark : BenchmarkNet
-    //{
-    //    private static void SendReliable(byte[] data, byte channelID, Peer peer)
-    //    {
-    //        Packet packet = default(Packet);
+    public sealed class ENetBenchmark : BenchmarkNet
+    {
+        private static void SendReliable(byte[] data, byte channelID, Peer peer)
+        {
+            Packet packet = default(Packet);
 
-    //        packet.Create(data, data.Length, PacketFlags.Reliable | PacketFlags.NoAllocate); // Reliable Sequenced
-    //        peer.Send(channelID, ref packet);
-    //    }
+            packet.Create(data, data.Length, PacketFlags.Reliable | PacketFlags.NoAllocate); // Reliable Sequenced
+            peer.Send(channelID, ref packet);
+        }
 
-    //    private static void SendUnreliable(byte[] data, byte channelID, Peer peer)
-    //    {
-    //        Packet packet = default(Packet);
+        private static void SendUnreliable(byte[] data, byte channelID, Peer peer)
+        {
+            Packet packet = default(Packet);
 
-    //        packet.Create(data, data.Length, PacketFlags.None | PacketFlags.NoAllocate); // Unreliable Sequenced
-    //        peer.Send(channelID, ref packet);
-    //    }
+            packet.Create(data, data.Length, PacketFlags.None | PacketFlags.NoAllocate); // Unreliable Sequenced
+            peer.Send(channelID, ref packet);
+        }
 
-    //    public static void Server()
-    //    {
-    //        using (Host server = new Host())
-    //        {
-    //            Address address = new Address();
+        public static void Server()
+        {
+            using (Host server = new Host())
+            {
+                Address address = new Address();
 
-    //            address.Port = port;
+                address.Port = port;
 
-    //            server.Create(address, maxClients, 4);
+                server.Create(address, maxClients, 4);
 
-    //            while (processActive)
-    //            {
-    //                server.Service(1000 / serverTickRate, out Event netEvent);
+                while (processActive)
+                {
+                    server.Service(1000 / serverTickRate, out Event netEvent);
 
-    //                switch (netEvent.Type)
-    //                {
-    //                    case EventType.None:
-    //                        break;
+                    switch (netEvent.Type)
+                    {
+                        case EventType.None:
+                            break;
 
-    //                    case EventType.Receive:
-    //                        if (netEvent.ChannelID == 2)
-    //                        {
-    //                            Interlocked.Increment(ref serverReliableReceived);
-    //                            Interlocked.Add(ref serverReliableBytesReceived, netEvent.Packet.Length);
-    //                            SendReliable(messageData, 0, netEvent.Peer);
-    //                            Interlocked.Increment(ref serverReliableSent);
-    //                            Interlocked.Add(ref serverReliableBytesSent, messageData.Length);
-    //                        }
-    //                        else if (netEvent.ChannelID == 3)
-    //                        {
-    //                            Interlocked.Increment(ref serverUnreliableReceived);
-    //                            Interlocked.Add(ref serverUnreliableBytesReceived, netEvent.Packet.Length);
-    //                            SendUnreliable(reversedData, 1, netEvent.Peer);
-    //                            Interlocked.Increment(ref serverUnreliableSent);
-    //                            Interlocked.Add(ref serverUnreliableBytesSent, reversedData.Length);
-    //                        }
+                        case EventType.Receive:
+                            if (netEvent.ChannelID == 2)
+                            {
+                                Interlocked.Increment(ref serverReliableReceived);
+                                Interlocked.Add(ref serverReliableBytesReceived, netEvent.Packet.Length);
+                                SendReliable(messageData, 0, netEvent.Peer);
+                                Interlocked.Increment(ref serverReliableSent);
+                                Interlocked.Add(ref serverReliableBytesSent, messageData.Length);
+                            }
+                            else if (netEvent.ChannelID == 3)
+                            {
+                                Interlocked.Increment(ref serverUnreliableReceived);
+                                Interlocked.Add(ref serverUnreliableBytesReceived, netEvent.Packet.Length);
+                                SendUnreliable(reversedData, 1, netEvent.Peer);
+                                Interlocked.Increment(ref serverUnreliableSent);
+                                Interlocked.Add(ref serverUnreliableBytesSent, reversedData.Length);
+                            }
 
-    //                        netEvent.Packet.Dispose();
+                            netEvent.Packet.Dispose();
 
-    //                        break;
-    //                }
-    //            }
-    //        }
-    //    }
+                            break;
+                    }
+                }
+            }
+        }
 
-    //    public static async Task Client()
-    //    {
-    //        await Task.Factory.StartNew(() => {
-    //            using (Host client = new Host())
-    //            {
-    //                Address address = new Address();
+        public static async Task Client()
+        {
+            await Task.Factory.StartNew(() =>
+            {
+                using (Host client = new Host())
+                {
+                    Address address = new Address();
 
-    //                address.SetHost(ip);
-    //                address.Port = port;
+                    address.SetHost(ip);
+                    address.Port = port;
 
-    //                client.Create();
+                    client.Create();
 
-    //                Peer peer = client.Connect(address, 4);
+                    Peer peer = client.Connect(address, 4);
 
-    //                int reliableToSend = 0;
-    //                int unreliableToSend = 0;
+                    int reliableToSend = 0;
+                    int unreliableToSend = 0;
 
-    //                Task.Factory.StartNew(async () => {
-    //                    bool reliableIncremented = false;
-    //                    bool unreliableIncremented = false;
+                    Task.Factory.StartNew(async () =>
+                    {
+                        bool reliableIncremented = false;
+                        bool unreliableIncremented = false;
 
-    //                    while (processActive)
-    //                    {
-    //                        if (reliableToSend > 0)
-    //                        {
-    //                            SendReliable(messageData, 2, peer);
-    //                            Interlocked.Decrement(ref reliableToSend);
-    //                            Interlocked.Increment(ref clientsReliableSent);
-    //                            Interlocked.Add(ref clientsReliableBytesSent, messageData.Length);
-    //                        }
+                        while (processActive)
+                        {
+                            if (reliableToSend > 0)
+                            {
+                                SendReliable(messageData, 2, peer);
+                                Interlocked.Decrement(ref reliableToSend);
+                                Interlocked.Increment(ref clientsReliableSent);
+                                Interlocked.Add(ref clientsReliableBytesSent, messageData.Length);
+                            }
 
-    //                        if (unreliableToSend > 0)
-    //                        {
-    //                            SendUnreliable(reversedData, 3, peer);
-    //                            Interlocked.Decrement(ref unreliableToSend);
-    //                            Interlocked.Increment(ref clientsUnreliableSent);
-    //                            Interlocked.Add(ref clientsUnreliableBytesSent, reversedData.Length);
-    //                        }
+                            if (unreliableToSend > 0)
+                            {
+                                SendUnreliable(reversedData, 3, peer);
+                                Interlocked.Decrement(ref unreliableToSend);
+                                Interlocked.Increment(ref clientsUnreliableSent);
+                                Interlocked.Add(ref clientsUnreliableBytesSent, reversedData.Length);
+                            }
 
-    //                        if (reliableToSend > 0 && !reliableIncremented)
-    //                        {
-    //                            reliableIncremented = true;
-    //                            Interlocked.Increment(ref clientsStreamsCount);
-    //                        }
-    //                        else if (reliableToSend == 0 && reliableIncremented)
-    //                        {
-    //                            reliableIncremented = false;
-    //                            Interlocked.Decrement(ref clientsStreamsCount);
-    //                        }
+                            if (reliableToSend > 0 && !reliableIncremented)
+                            {
+                                reliableIncremented = true;
+                                Interlocked.Increment(ref clientsStreamsCount);
+                            }
+                            else if (reliableToSend == 0 && reliableIncremented)
+                            {
+                                reliableIncremented = false;
+                                Interlocked.Decrement(ref clientsStreamsCount);
+                            }
 
-    //                        if (unreliableToSend > 0 && !unreliableIncremented)
-    //                        {
-    //                            unreliableIncremented = true;
-    //                            Interlocked.Increment(ref clientsStreamsCount);
-    //                        }
-    //                        else if (unreliableToSend == 0 && unreliableIncremented)
-    //                        {
-    //                            unreliableIncremented = false;
-    //                            Interlocked.Decrement(ref clientsStreamsCount);
-    //                        }
+                            if (unreliableToSend > 0 && !unreliableIncremented)
+                            {
+                                unreliableIncremented = true;
+                                Interlocked.Increment(ref clientsStreamsCount);
+                            }
+                            else if (unreliableToSend == 0 && unreliableIncremented)
+                            {
+                                unreliableIncremented = false;
+                                Interlocked.Decrement(ref clientsStreamsCount);
+                            }
 
-    //                        await Task.Delay(1000 / sendRate);
-    //                    }
-    //                }, TaskCreationOptions.AttachedToParent);
+                            await Task.Delay(1000 / sendRate);
+                        }
+                    }, TaskCreationOptions.AttachedToParent);
 
-    //                while (processActive)
-    //                {
-    //                    client.Service(1000 / clientTickRate, out Event netEvent);
+                    while (processActive)
+                    {
+                        client.Service(1000 / clientTickRate, out Event netEvent);
 
-    //                    switch (netEvent.Type)
-    //                    {
-    //                        case EventType.None:
-    //                            break;
+                        switch (netEvent.Type)
+                        {
+                            case EventType.None:
+                                break;
 
-    //                        case EventType.Connect:
-    //                            Interlocked.Increment(ref clientsConnectedCount);
-    //                            Interlocked.Exchange(ref reliableToSend, reliableMessages);
-    //                            Interlocked.Exchange(ref unreliableToSend, unreliableMessages);
+                            case EventType.Connect:
+                                Interlocked.Increment(ref clientsConnectedCount);
+                                Interlocked.Exchange(ref reliableToSend, reliableMessages);
+                                Interlocked.Exchange(ref unreliableToSend, unreliableMessages);
 
-    //                            break;
+                                break;
 
-    //                        case EventType.Disconnect:
-    //                        case EventType.Timeout:
-    //                            Interlocked.Increment(ref clientsDisconnectedCount);
-    //                            Interlocked.Exchange(ref reliableToSend, 0);
-    //                            Interlocked.Exchange(ref unreliableToSend, 0);
+                            case EventType.Disconnect:
+                            case EventType.Timeout:
+                                Interlocked.Increment(ref clientsDisconnectedCount);
+                                Interlocked.Exchange(ref reliableToSend, 0);
+                                Interlocked.Exchange(ref unreliableToSend, 0);
 
-    //                            break;
+                                break;
 
-    //                        case EventType.Receive:
-    //                            if (netEvent.ChannelID == 0)
-    //                            {
-    //                                Interlocked.Increment(ref clientsReliableReceived);
-    //                                Interlocked.Add(ref clientsReliableBytesReceived, netEvent.Packet.Length);
-    //                            }
-    //                            else if (netEvent.ChannelID == 1)
-    //                            {
-    //                                Interlocked.Increment(ref clientsUnreliableReceived);
-    //                                Interlocked.Add(ref clientsUnreliableBytesReceived, netEvent.Packet.Length);
-    //                            }
+                            case EventType.Receive:
+                                if (netEvent.ChannelID == 0)
+                                {
+                                    Interlocked.Increment(ref clientsReliableReceived);
+                                    Interlocked.Add(ref clientsReliableBytesReceived, netEvent.Packet.Length);
+                                }
+                                else if (netEvent.ChannelID == 1)
+                                {
+                                    Interlocked.Increment(ref clientsUnreliableReceived);
+                                    Interlocked.Add(ref clientsUnreliableBytesReceived, netEvent.Packet.Length);
+                                }
 
-    //                            netEvent.Packet.Dispose();
+                                netEvent.Packet.Dispose();
 
-    //                            break;
-    //                    }
-    //                }
+                                break;
+                        }
+                    }
 
-    //                peer.Disconnect(0);
-    //            }
-    //        }, TaskCreationOptions.LongRunning);
-    //    }
-    //}
+                    peer.Disconnect(0);
+                }
+            }, TaskCreationOptions.LongRunning);
+        }
+    }
 
     //public sealed class UNetBenchmark : BenchmarkNet
     //{
@@ -1202,6 +1205,49 @@ namespace NX
     //        }, TaskCreationOptions.LongRunning);
     //    }
     //}
+
+    public sealed class SocketBenchmark : BenchmarkNet
+    {
+        public static void Server()
+        {
+            ManualResetEvent allDone = new ManualResetEvent(false);
+
+            IPAddress ipAddress = IPAddress.Parse(ip);
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, port);
+            Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
+
+            try
+            {
+                listener.Bind(localEndPoint);
+                listener.Listen(100);
+
+                while (true)
+                {
+                    // Set the event to nonsignaled state.  
+                    allDone.Reset();
+
+                    // Start an asynchronous socket to listen for connections.  
+                    Console.WriteLine("Waiting for a connection...");
+                    listener.BeginAccept(
+                        new AsyncCallback(AcceptCallback),
+                        listener);
+
+                    // Wait until a connection is made before continuing.  
+                    allDone.WaitOne();
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
+        public static void Client()
+        {
+
+        }
+    }
 
     public sealed class LiteNetLibBenchmark : BenchmarkNet
     {
